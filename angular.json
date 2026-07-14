@@ -35,6 +35,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/family-needs-management/",
               "budgets": [
                 { "type": "initial", "maximumWarning": "1mb", "maximumError": "2mb" },
                 { "type": "anyComponentStyle", "maximumWarning": "8kb", "maximumError": "16kb" }
@@ -69,8 +70,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "analytics": "e0f70a54-089e-4e94-8f47-210af8ff04b5"
   }
 }
