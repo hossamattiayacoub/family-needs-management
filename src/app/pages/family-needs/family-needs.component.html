@@ -1,0 +1,95 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Family Needs</h1>
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Family Need
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <div class="filters-card">
+        <mat-form-field appearance="outline">
+          <mat-label>Search by Family Name</mat-label>
+          <input matInput (keyup)="onSearchChange($event)" placeholder="e.g. Smith">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Filter by Status</mat-label>
+          <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+            @for (option of statusOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="FamilyName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Family Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.FamilyName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="NeedName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Need Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.NeedName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-chip [class.status-chip-pending]="row.Status === 'Pending'"
+                        [class.status-chip-done]="row.Status === 'Done'">
+                {{ row.Status }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="OrderDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Order Date</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.OrderDate ? (row.OrderDate | date:'mediumDate') : '—' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="OrderCompletionDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Completion Date</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.OrderCompletionDate ? (row.OrderCompletionDate | date:'mediumDate') : '—' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="primary" (click)="openEditDialog(row)" aria-label="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="openDeleteDialog(row)" aria-label="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+              @if (isLoaded()) {
+                No family needs found.
+              } @else {
+                Loading family needs...
+              }
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

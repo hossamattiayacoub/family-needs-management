@@ -1,0 +1,13 @@
+.table-wrapper {
+  overflow-x: auto;
+}
+
+td.mat-cell {
+  text-align: center;
+  padding: 16px;
+}
+
+mat-chip {
+  font-weight: 500;
+  text-transform: capitalize;
+}

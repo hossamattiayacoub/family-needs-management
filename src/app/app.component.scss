@@ -1,0 +1,26 @@
+.shell-container {
+  height: calc(100vh - 64px);
+}
+
+.sidenav {
+  width: 240px;
+}
+
+.active-link {
+  background-color: rgba(63, 81, 181, 0.1);
+  font-weight: 600;
+}
+
+.content {
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .sidenav {
+    width: 200px;
+  }
+  .content {
+    padding: 12px;
+  }
+}
