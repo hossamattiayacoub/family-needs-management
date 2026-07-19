@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +19,10 @@ import {
   NEED_STATUS_VALUES,
   NeedStatus
 } from '../../core/models/family-need.model';
+import {
+  SearchableSelectComponent,
+  SearchableSelectOption
+} from '../../shared/components/searchable-select/searchable-select.component';
 
 export interface FamilyNeedDialogData {
   mode: 'add' | 'edit';
@@ -36,7 +40,8 @@ export interface FamilyNeedDialogData {
     MatSelectModule,
     MatDatepickerModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    SearchableSelectComponent
   ],
   template: `
     <h2 mat-dialog-title>{{ data.mode === 'add' ? 'Add Family Need' : 'Edit Family Need' }}</h2>
@@ -48,29 +53,23 @@ export interface FamilyNeedDialogData {
     } @else {
       <form [formGroup]="form" (ngSubmit)="save()">
         <mat-dialog-content>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Family</mat-label>
-            <mat-select formControlName="FamilyId" required>
-              @for (family of families(); track family.FamilyId) {
-                <mat-option [value]="family.FamilyId">{{ family.FamilyName }}</mat-option>
-              }
-            </mat-select>
-            @if (form.controls.FamilyId.hasError('required')) {
-              <mat-error>Family is required</mat-error>
-            }
-          </mat-form-field>
+          <app-searchable-select
+            formControlName="FamilyId"
+            label="Family"
+            placeholder="Type to search family..."
+            [options]="familyOptions()"
+            [invalid]="form.controls.FamilyId.hasError('required')"
+            errorText="Family is required">
+          </app-searchable-select>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Need</mat-label>
-            <mat-select formControlName="NeedId" required>
-              @for (need of needs(); track need.NeedId) {
-                <mat-option [value]="need.NeedId">{{ need.NeedName }}</mat-option>
-              }
-            </mat-select>
-            @if (form.controls.NeedId.hasError('required')) {
-              <mat-error>Need is required</mat-error>
-            }
-          </mat-form-field>
+          <app-searchable-select
+            formControlName="NeedId"
+            label="Need"
+            placeholder="Type to search need..."
+            [options]="needOptions()"
+            [invalid]="form.controls.NeedId.hasError('required')"
+            errorText="Need is required">
+          </app-searchable-select>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Status</mat-label>
@@ -121,7 +120,15 @@ export interface FamilyNeedDialogData {
     }
   `,
   styles: [`
-    .full-width { width: 100%; min-width: 320px; }
+    .full-width { width: 100%; min-width: 0; }
+    @media (min-width: 480px) {
+      .full-width { min-width: 300px; }
+    }
+    mat-dialog-content {
+      min-width: 0;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
     .loading-content { display: flex; justify-content: center; padding: 32px; }
   `]
 })
@@ -136,6 +143,13 @@ export class FamilyNeedFormDialogComponent implements OnInit {
   readonly families = signal<Family[]>([]);
   readonly needs = signal<Need[]>([]);
   readonly loadingOptions = signal(true);
+
+  readonly familyOptions = computed<SearchableSelectOption[]>(() =>
+    this.families().map((f) => ({ id: f.FamilyId, label: f.FamilyName }))
+  );
+  readonly needOptions = computed<SearchableSelectOption[]>(() =>
+    this.needs().map((n) => ({ id: n.NeedId, label: n.NeedName }))
+  );
 
   readonly form = this.fb.group({
     FamilyId: this.fb.control<number | null>(this.data.familyNeed?.FamilyId ?? null, Validators.required),

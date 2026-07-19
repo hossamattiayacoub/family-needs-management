@@ -44,7 +44,11 @@ export interface FamilyDialogData {
     </form>
   `,
   styles: [`
-    .full-width { width: 100%; min-width: 320px; }
+    .full-width { width: 100%; min-width: 0; }
+    mat-dialog-content { min-width: 0; }
+    @media (min-width: 480px) {
+      .full-width { min-width: 300px; }
+    }
   `]
 })
 export class FamilyFormDialogComponent {

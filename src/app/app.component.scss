@@ -17,9 +17,19 @@
 }
 
 @media (max-width: 768px) {
-  .sidenav {
-    width: 200px;
+  // Material's toolbar shrinks to 56px tall below the 600px breakpoint.
+  .shell-container {
+    height: calc(100vh - 56px);
   }
+
+  // Sidenav is now an overlay ("over" mode) on mobile, not a permanent
+  // column, so it can be a comfortable drawer width without eating into
+  // the main content area.
+  .sidenav {
+    width: 260px;
+    max-width: 85vw;
+  }
+
   .content {
     padding: 12px;
   }

@@ -62,3 +62,28 @@ table.mat-mdc-table {
     padding: 8px;
   }
 }
+
+// Responsive Material dialogs: on phones, let the dialog panel use most of
+// the viewport width/height instead of Material's default fixed sizing,
+// and pin the header/actions in place while only the body scrolls.
+@media (max-width: 599px) {
+  .cdk-overlay-pane {
+    max-width: 96vw !important;
+    width: 96vw !important;
+  }
+
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mat-mdc-dialog-title {
+    padding-top: 16px !important;
+  }
+
+  .mat-mdc-dialog-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
