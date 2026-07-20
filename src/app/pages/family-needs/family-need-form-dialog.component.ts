@@ -108,6 +108,11 @@ export interface FamilyNeedDialogData {
               <mat-error>Order Completion Date is required when Status is Done</mat-error>
             }
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="Notes" rows="3"></textarea>
+          </mat-form-field>
         </mat-dialog-content>
 
         <mat-dialog-actions align="end">
@@ -158,7 +163,8 @@ export class FamilyNeedFormDialogComponent implements OnInit {
     OrderDate: this.fb.control<Date | null>(this.toDateOrNull(this.data.familyNeed?.OrderDate)),
     OrderCompletionDate: this.fb.control<Date | null>(
       this.toDateOrNull(this.data.familyNeed?.OrderCompletionDate)
-    )
+    ),
+    Notes: this.fb.nonNullable.control<string>(this.data.familyNeed?.Notes ?? '')
   });
 
   ngOnInit(): void {
@@ -189,7 +195,8 @@ export class FamilyNeedFormDialogComponent implements OnInit {
       NeedId: value.NeedId as number,
       Status: value.Status as NeedStatus,
       OrderDate: value.OrderDate,
-      OrderCompletionDate: value.OrderCompletionDate
+      OrderCompletionDate: value.OrderCompletionDate,
+      Notes: value.Notes
     };
     this.dialogRef.close(result);
   }

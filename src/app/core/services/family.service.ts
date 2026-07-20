@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { Family } from '../models/family.model';
+import { Family, FamilyCreate, FamilyUpdate } from '../models/family.model';
 
 @Injectable({ providedIn: 'root' })
 export class FamilyService {
@@ -11,14 +11,28 @@ export class FamilyService {
     return this.api.get<Family[]>('getFamilies');
   }
 
-  addFamily(familyName: string): Observable<Family> {
-    return this.api.post<Family>('addFamily', { FamilyName: familyName });
+  addFamily(payload: FamilyCreate): Observable<Family> {
+    return this.api.post<Family>('addFamily', {
+      FamilyName: payload.FamilyName,
+      GroupId: payload.GroupId,
+      MobileNo1: payload.MobileNo1 ?? '',
+      MobileNo2: payload.MobileNo2 ?? '',
+      Address: payload.Address ?? '',
+      Location: payload.Location ?? '',
+      Notes: payload.Notes ?? ''
+    });
   }
 
-  updateFamily(family: Family): Observable<Family> {
+  updateFamily(payload: FamilyUpdate): Observable<Family> {
     return this.api.post<Family>('updateFamily', {
-      FamilyId: family.FamilyId,
-      FamilyName: family.FamilyName
+      FamilyId: payload.FamilyId,
+      FamilyName: payload.FamilyName,
+      GroupId: payload.GroupId,
+      MobileNo1: payload.MobileNo1 ?? '',
+      MobileNo2: payload.MobileNo2 ?? '',
+      Address: payload.Address ?? '',
+      Location: payload.Location ?? '',
+      Notes: payload.Notes ?? ''
     });
   }
 

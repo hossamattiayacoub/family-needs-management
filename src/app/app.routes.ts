@@ -25,6 +25,18 @@ export const routes: Routes = [
     title: 'Needs Lookup'
   },
   {
+    path: 'groups',
+    loadComponent: () =>
+      import('./pages/groups/groups.component').then((m) => m.GroupsComponent),
+    title: 'Groups Lookup'
+  },
+  {
+    path: 'need-categories',
+    loadComponent: () =>
+      import('./pages/need-category/need-category.component').then((m) => m.NeedCategoryComponent),
+    title: 'Need Category'
+  },
+  {
     path: '**',
     redirectTo: 'family-needs'
   }

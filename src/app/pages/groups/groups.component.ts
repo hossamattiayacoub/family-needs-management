@@ -9,17 +9,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 
-import { NeedService } from '../../core/services/need.service';
+import { GroupService } from '../../core/services/group.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { Need } from '../../core/models/need.model';
-import { NeedFormDialogComponent, NeedDialogData } from './need-form-dialog.component';
+import { Group } from '../../core/models/group.model';
+import { GroupFormDialogComponent, GroupDialogData } from './group-form-dialog.component';
 import {
   ConfirmDialogComponent,
   ConfirmDialogData
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-needs',
+  selector: 'app-groups',
   standalone: true,
   imports: [
     MatTableModule,
@@ -31,23 +31,23 @@ import {
     MatIconModule,
     MatCardModule
   ],
-  templateUrl: './needs.component.html',
-  styleUrl: './needs.component.scss'
+  templateUrl: './groups.component.html',
+  styleUrl: './groups.component.scss'
 })
-export class NeedsComponent implements AfterViewInit {
-  private readonly needService = inject(NeedService);
+export class GroupsComponent implements AfterViewInit {
+  private readonly groupService = inject(GroupService);
   private readonly notification = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
-  readonly displayedColumns = ['NeedId', 'NeedName', 'NeedCategoryName', 'actions'];
-  readonly dataSource = new MatTableDataSource<Need>([]);
+  readonly displayedColumns = ['GroupId', 'GroupName', 'actions'];
+  readonly dataSource = new MatTableDataSource<Group>([]);
   readonly isLoaded = signal(false);
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor() {
-    this.loadNeeds();
+    this.loadGroups();
   }
 
   ngAfterViewInit(): void {
@@ -55,10 +55,10 @@ export class NeedsComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  loadNeeds(): void {
-    this.needService.getNeeds().subscribe({
-      next: (needs) => {
-        this.dataSource.data = needs;
+  loadGroups(): void {
+    this.groupService.getGroups().subscribe({
+      next: (groups) => {
+        this.dataSource.data = groups;
         this.isLoaded.set(true);
       },
       error: (err: Error) => this.notification.error(err.message)
@@ -74,54 +74,54 @@ export class NeedsComponent implements AfterViewInit {
   }
 
   openAddDialog(): void {
-    const ref = this.dialog.open<NeedFormDialogComponent, NeedDialogData, Need>(
-      NeedFormDialogComponent,
+    const ref = this.dialog.open<GroupFormDialogComponent, GroupDialogData, Group>(
+      GroupFormDialogComponent,
       { data: { mode: 'add' } }
     );
 
     ref.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.needService.addNeed(result).subscribe({
+      this.groupService.addGroup(result.GroupName).subscribe({
         next: () => {
-          this.notification.success('Need added successfully');
-          this.loadNeeds();
+          this.notification.success('Group added successfully');
+          this.loadGroups();
         },
         error: (err: Error) => this.notification.error(err.message)
       });
     });
   }
 
-  openEditDialog(need: Need): void {
-    const ref = this.dialog.open<NeedFormDialogComponent, NeedDialogData, Need>(
-      NeedFormDialogComponent,
-      { data: { mode: 'edit', need } }
+  openEditDialog(group: Group): void {
+    const ref = this.dialog.open<GroupFormDialogComponent, GroupDialogData, Group>(
+      GroupFormDialogComponent,
+      { data: { mode: 'edit', group } }
     );
 
     ref.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.needService.updateNeed(result).subscribe({
+      this.groupService.updateGroup(result).subscribe({
         next: () => {
-          this.notification.success('Need updated successfully');
-          this.loadNeeds();
+          this.notification.success('Group updated successfully');
+          this.loadGroups();
         },
         error: (err: Error) => this.notification.error(err.message)
       });
     });
   }
 
-  openDeleteDialog(need: Need): void {
+  openDeleteDialog(group: Group): void {
     const data: ConfirmDialogData = {
-      title: 'Delete Need',
-      message: `Are you sure you want to delete "${need.NeedName}"?`
+      title: 'Delete Group',
+      message: `Are you sure you want to delete "${group.GroupName}"?`
     };
     const ref = this.dialog.open(ConfirmDialogComponent, { data });
 
     ref.afterClosed().subscribe((confirmed) => {
       if (!confirmed) return;
-      this.needService.deleteNeed(need.NeedId).subscribe({
+      this.groupService.deleteGroup(group.GroupId).subscribe({
         next: () => {
-          this.notification.success('Need deleted successfully');
-          this.loadNeeds();
+          this.notification.success('Group deleted successfully');
+          this.loadGroups();
         },
         error: (err: Error) => this.notification.error(err.message)
       });

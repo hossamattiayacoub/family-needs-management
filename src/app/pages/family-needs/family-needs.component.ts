@@ -66,6 +66,7 @@ export class FamilyNeedsComponent implements AfterViewInit {
     'Status',
     'OrderDate',
     'OrderCompletionDate',
+    'Notes',
     'actions'
   ];
   readonly dataSource = new MatTableDataSource<FamilyNeed>([]);

@@ -17,7 +17,8 @@ export class FamilyNeedsService {
       NeedId: value.NeedId,
       Status: value.Status,
       OrderDate: value.OrderDate ?? null,
-      OrderCompletionDate: value.OrderCompletionDate ?? null
+      OrderCompletionDate: value.OrderCompletionDate ?? null,
+      Notes: value.Notes ?? ''
     });
   }
 
@@ -28,7 +29,8 @@ export class FamilyNeedsService {
       NeedId: value.NeedId,
       Status: value.Status,
       OrderDate: value.OrderDate ?? null,
-      OrderCompletionDate: value.OrderCompletionDate ?? null
+      OrderCompletionDate: value.OrderCompletionDate ?? null,
+      Notes: value.Notes ?? ''
     });
   }
 

@@ -17,19 +17,42 @@
 
       <div class="table-wrapper">
         <table mat-table [dataSource]="dataSource" matSort>
-          <ng-container matColumnDef="FamilyId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Family Id</th>
-            <td mat-cell *matCellDef="let row">{{ row.FamilyId }}</td>
-          </ng-container>
-
           <ng-container matColumnDef="FamilyName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Family Name</th>
             <td mat-cell *matCellDef="let row">{{ row.FamilyName }}</td>
           </ng-container>
 
+          <ng-container matColumnDef="GroupName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Group Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.GroupName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="MobileNo1">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile No 1</th>
+            <td mat-cell *matCellDef="let row">{{ row.MobileNo1 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="MobileNo2">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile No 2</th>
+            <td mat-cell *matCellDef="let row">{{ row.MobileNo2 || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Address">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+            <td mat-cell *matCellDef="let row">{{ row.Address }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Location">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
+            <td mat-cell *matCellDef="let row">{{ row.Location }}</td>
+          </ng-container>
+
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
-            <td mat-cell *matCellDef="let row">
+            <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
+              <button mat-icon-button (click)="openDetailsDialog(row)" aria-label="View details">
+                <mat-icon>visibility</mat-icon>
+              </button>
               <button mat-icon-button color="primary" (click)="openEditDialog(row)" aria-label="Edit">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -40,7 +63,9 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              class="clickable-row"
+              (click)="openDetailsDialog(row)"></tr>
 
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell" [attr.colspan]="displayedColumns.length">

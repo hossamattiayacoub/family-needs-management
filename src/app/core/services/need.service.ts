@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { Need } from '../models/need.model';
+import { Need, NeedCreate, NeedUpdate } from '../models/need.model';
 
 @Injectable({ providedIn: 'root' })
 export class NeedService {
@@ -11,14 +11,18 @@ export class NeedService {
     return this.api.get<Need[]>('getNeeds');
   }
 
-  addNeed(needName: string): Observable<Need> {
-    return this.api.post<Need>('addNeed', { NeedName: needName });
+  addNeed(payload: NeedCreate): Observable<Need> {
+    return this.api.post<Need>('addNeed', {
+      NeedName: payload.NeedName,
+      NeedCategoryId: payload.NeedCategoryId
+    });
   }
 
-  updateNeed(need: Need): Observable<Need> {
+  updateNeed(payload: NeedUpdate): Observable<Need> {
     return this.api.post<Need>('updateNeed', {
-      NeedId: need.NeedId,
-      NeedName: need.NeedName
+      NeedId: payload.NeedId,
+      NeedName: payload.NeedName,
+      NeedCategoryId: payload.NeedCategoryId
     });
   }
 

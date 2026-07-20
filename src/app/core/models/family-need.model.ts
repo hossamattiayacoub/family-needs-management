@@ -14,9 +14,11 @@ export interface FamilyNeed {
   OrderDate?: string | null;
   /** ISO date string (or '') as returned by the backend. Required when Status = Done. */
   OrderCompletionDate?: string | null;
+  /** Optional free-text notes. */
+  Notes?: string | null;
 }
 
-/** Shape submitted from the Add/Edit dialog (dropdown ids + status + dates). */
+/** Shape submitted from the Add/Edit dialog (dropdown ids + status + dates + notes). */
 export interface FamilyNeedFormValue {
   __row?: number;
   FamilyId: number;
@@ -24,4 +26,5 @@ export interface FamilyNeedFormValue {
   Status: NeedStatus;
   OrderDate?: Date | null;
   OrderCompletionDate?: Date | null;
+  Notes?: string | null;
 }

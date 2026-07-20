@@ -17,6 +17,10 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DetailsDialogComponent,
+  DetailsDialogData
+} from '../../shared/components/details-dialog/details-dialog.component';
 
 @Component({
   selector: 'app-families',
@@ -39,7 +43,15 @@ export class FamiliesComponent implements AfterViewInit {
   private readonly notification = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
-  readonly displayedColumns = ['FamilyId', 'FamilyName', 'actions'];
+  readonly displayedColumns = [
+    'FamilyName',
+    'GroupName',
+    'MobileNo1',
+    'MobileNo2',
+    'Address',
+    'Location',
+    'actions'
+  ];
   readonly dataSource = new MatTableDataSource<Family>([]);
   readonly isLoaded = signal(false);
 
@@ -81,7 +93,7 @@ export class FamiliesComponent implements AfterViewInit {
 
     ref.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.familyService.addFamily(result.FamilyName).subscribe({
+      this.familyService.addFamily(result).subscribe({
         next: () => {
           this.notification.success('Family added successfully');
           this.loadFamilies();
@@ -107,6 +119,23 @@ export class FamiliesComponent implements AfterViewInit {
         error: (err: Error) => this.notification.error(err.message)
       });
     });
+  }
+
+  openDetailsDialog(family: Family): void {
+    const data: DetailsDialogData = {
+      title: family.FamilyName,
+      subtitle: 'Family Details',
+      fields: [
+        { label: 'Family Name', value: family.FamilyName },
+        { label: 'Group Name', value: family.GroupName },
+        { label: 'Mobile No 1', value: family.MobileNo1 },
+        { label: 'Mobile No 2', value: family.MobileNo2 },
+        { label: 'Address', value: family.Address },
+        { label: 'Location', value: family.Location },
+        { label: 'Notes', value: family.Notes }
+      ]
+    };
+    this.dialog.open(DetailsDialogComponent, { data, width: '480px', maxWidth: '95vw' });
   }
 
   openDeleteDialog(family: Family): void {

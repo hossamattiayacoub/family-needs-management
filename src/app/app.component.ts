@@ -37,7 +37,9 @@ export class AppComponent {
   readonly navLinks = [
     { path: '/family-needs', label: 'Family Needs', icon: 'checklist' },
     { path: '/families', label: 'Families Lookup', icon: 'diversity_3' },
-    { path: '/needs', label: 'Needs Lookup', icon: 'volunteer_activism' }
+    { path: '/needs', label: 'Needs Lookup', icon: 'volunteer_activism' },
+    { path: '/groups', label: 'Groups Lookup', icon: 'groups' },
+    { path: '/need-categories', label: 'Need Category', icon: 'category' }
   ];
 
   /** True on phones/small screens — drives sidenav mode + default open state. */
