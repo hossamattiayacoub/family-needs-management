@@ -9,11 +9,22 @@
 
   <mat-card>
     <mat-card-content>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Search by Family Name</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="e.g. Smith">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
+      <div class="filters-card">
+        <mat-form-field appearance="outline">
+          <mat-label>Search by Family Name</mat-label>
+          <input matInput (keyup)="onSearchChange($event)" placeholder="e.g. Smith">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <app-searchable-select
+          class="group-filter"
+          label="Group"
+          placeholder="Type to search group..."
+          [options]="groupFilterOptions()"
+          [ngModel]="selectedGroupId"
+          (ngModelChange)="onGroupFilterChange($event)">
+        </app-searchable-select>
+      </div>
 
       <div class="table-wrapper">
         <table mat-table [dataSource]="dataSource" matSort>
