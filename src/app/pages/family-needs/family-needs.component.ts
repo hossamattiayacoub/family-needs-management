@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -14,7 +14,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 
 import { FamilyNeedsService } from '../../core/services/family-needs.service';
+import { GroupService } from '../../core/services/group.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { Group } from '../../core/models/group.model';
 import {
   FamilyNeed,
   FamilyNeedFormValue,
@@ -29,11 +31,18 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData
 } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  SearchableSelectComponent,
+  SearchableSelectOption
+} from '../../shared/components/searchable-select/searchable-select.component';
 
 interface StatusFilterOption {
   label: string;
   value: NeedStatus | 'All';
 }
+
+/** Sentinel id for the "All Groups" option — real GroupIds always start at 1. */
+const ALL_GROUPS_ID = 0;
 
 @Component({
   selector: 'app-family-needs',
@@ -50,13 +59,15 @@ interface StatusFilterOption {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatChipsModule
+    MatChipsModule,
+    SearchableSelectComponent
   ],
   templateUrl: './family-needs.component.html',
   styleUrl: './family-needs.component.scss'
 })
 export class FamilyNeedsComponent implements AfterViewInit {
   private readonly familyNeedsService = inject(FamilyNeedsService);
+  private readonly groupService = inject(GroupService);
   private readonly notification = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
@@ -79,17 +90,26 @@ export class FamilyNeedsComponent implements AfterViewInit {
   selectedStatus: NeedStatus | 'All' = 'All';
   searchTerm = '';
 
+  readonly groups = signal<Group[]>([]);
+  readonly groupFilterOptions = computed<SearchableSelectOption[]>(() => [
+    { id: ALL_GROUPS_ID, label: 'All Groups' },
+    ...this.groups().map((g) => ({ id: g.GroupId, label: g.GroupName }))
+  ]);
+  selectedGroupId: number = ALL_GROUPS_ID;
+
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor() {
     this.dataSource.filterPredicate = (row, filter) => {
-      const parsed = JSON.parse(filter) as { search: string; status: string };
+      const parsed = JSON.parse(filter) as { search: string; status: string; groupId: number };
       const matchesSearch = row.FamilyName.toLowerCase().includes(parsed.search);
       const matchesStatus = parsed.status === 'All' || row.Status === parsed.status;
-      return matchesSearch && matchesStatus;
+      const matchesGroup = parsed.groupId === ALL_GROUPS_ID || row.GroupId === parsed.groupId;
+      return matchesSearch && matchesStatus && matchesGroup;
     };
     this.loadFamilyNeeds();
+    this.loadGroups();
   }
 
   ngAfterViewInit(): void {
@@ -102,7 +122,15 @@ export class FamilyNeedsComponent implements AfterViewInit {
       next: (records) => {
         this.dataSource.data = records;
         this.isLoaded.set(true);
+        this.applyFilters();
       },
+      error: (err: Error) => this.notification.error(err.message)
+    });
+  }
+
+  loadGroups(): void {
+    this.groupService.getGroups().subscribe({
+      next: (groups) => this.groups.set(groups),
       error: (err: Error) => this.notification.error(err.message)
     });
   }
@@ -110,7 +138,8 @@ export class FamilyNeedsComponent implements AfterViewInit {
   applyFilters(): void {
     this.dataSource.filter = JSON.stringify({
       search: this.searchTerm.trim().toLowerCase(),
-      status: this.selectedStatus
+      status: this.selectedStatus,
+      groupId: this.selectedGroupId
     });
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -119,6 +148,11 @@ export class FamilyNeedsComponent implements AfterViewInit {
 
   onSearchChange(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value;
+    this.applyFilters();
+  }
+
+  onGroupFilterChange(groupId: number | null): void {
+    this.selectedGroupId = groupId ?? ALL_GROUPS_ID;
     this.applyFilters();
   }
 

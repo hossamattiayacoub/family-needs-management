@@ -16,6 +16,12 @@ export interface FamilyNeed {
   OrderCompletionDate?: string | null;
   /** Optional free-text notes. */
   Notes?: string | null;
+  /**
+   * Derived automatically by the backend from the selected Family's Group —
+   * never set directly by the user or sent from the Add/Edit dialog.
+   * Present here so the grid can filter by it.
+   */
+  GroupId?: number;
 }
 
 /** Shape submitted from the Add/Edit dialog (dropdown ids + status + dates + notes). */

@@ -24,6 +24,15 @@
             }
           </mat-select>
         </mat-form-field>
+
+        <app-searchable-select
+          class="group-filter"
+          label="Group"
+          placeholder="Type to search group..."
+          [options]="groupFilterOptions()"
+          [ngModel]="selectedGroupId"
+          (ngModelChange)="onGroupFilterChange($event)">
+        </app-searchable-select>
       </div>
 
       <div class="table-wrapper">
